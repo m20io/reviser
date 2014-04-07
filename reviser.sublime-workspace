@@ -1,0 +1,781 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"order",
+				"order_factory"
+			],
+			[
+				"new",
+				"new_order"
+			],
+			[
+				"text",
+				"text_corrected"
+			],
+			[
+				"com",
+				"compile"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "# This file is copied to spec/ when you run 'rails generate rspec:install'\nENV[\"RAILS_ENV\"] ||= 'test'\nrequire File.expand_path(\"../../config/environment\", __FILE__)\nrequire 'rspec/rails'\nrequire 'rspec/autorun'\n#require 'nulldb_rspec'\n\n# Requires supporting ruby files with custom matchers and macros, etc,\n# in spec/support/ and its subdirectories.\nDir[Rails.root.join(\"spec/support/**/*.rb\")].each { |f| require f }\n\n# Checks for pending migrations before tests are run.\n# If you are not using ActiveRecord, you can remove this line.\nActiveRecord::Migration.check_pending! if defined?(ActiveRecord::Migration)\n\n\n\nRSpec.configure do |config|\n  # ## Mock Framework\n  #\n  # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:\n  #\n  # config.mock_with :mocha\n  # config.mock_with :flexmock\n  # config.mock_with :rr\n\n  # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures\n  config.fixture_path = \"#{::Rails.root}/spec/fixtures\"\n\n  # If you're not using ActiveRecord, or you'd prefer not to run each of your\n  # examples within a transaction, remove the following line or assign false\n  # instead of true.\n  # config.use_transactional_fixtures = true\n\n  # Run all specs with nullDB to remove database connections execpt integration tests\n  #config.around(:each) do |example|\n  #  unless example.metadata[:use_real_database]\n  #    include NullDB::RSpec::NullifiedDatabase\n  #  end\n  #  example.run   \n  #end\n  # If true, the base class of anonymous controllers will be inferred\n  # automatically. This will be the default behavior in future versions of\n  # rspec-rails.\n  config.infer_base_class_for_anonymous_controllers = false\n\n  # Run specs in random order to surface order dependencies. If you find an\n  # order dependency and want to debug it, you can fix the order by providing\n  # the seed, which is printed after each run.\n  #     --seed 1234\n  config.order = \"random\"\nend\n",
+			"file": "spec/spec_helper.rb",
+			"file_size": -1,
+			"file_write_time": -1,
+			"settings":
+			{
+				"buffer_size": 1927,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "class ProofreadingAgency\n	attr_reader :orders\n	attr_writer :order_factory\n\n	def initialize\n		@orders = []\n	end\n\n	def name\n		\"Reviser Online\"\n	end\n\n	def claim\n		\"Lektorat für zeitnahe Korrektur kuzer Texte.\"\n	end\n\n	def new_order\n		order_factory.call.tap do |order|\n			order.proofreading_agency = self\n		end\n	end\n\n	private\n	def order_factory\n		@order_factory ||= Order.public_method(:new)\n	end\nend",
+			"file": "app/models/proofreading_agency.rb",
+			"file_size": -1,
+			"file_write_time": -1,
+			"settings":
+			{
+				"buffer_size": 395,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "source 'https://rubygems.org'\n\n# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'\ngem 'rails', '4.0.4'\n\n# Infrastructure gems\ngem 'sass-rails', '~> 4.0.0'\ngem 'uglifier', '>= 1.3.0'\ngem 'coffee-rails', '~> 4.0.0'\ngem 'jquery-rails'\ngem 'thin'\ngem 'bcrypt-ruby'\ngem 'hpricot'\ngem 'turbolinks'\ngem 'omniauth-facebook'\ngem 'omniauth-twitter'\ngem \"omniauth-google-oauth2\"\ngem \"authbuttons-rails\"\ngem 'omniauth-linkedin'\ngem 'paypal-sdk-rest'\n\ngroup :test,:development  do\n  gem 'pry'\n  gem 'sqlite3'\n  gem 'guard-rspec'\n  gem 'rspec-rails'\nend\n\ngroup :doc do\n  # bundle exec rake doc:rails generates the API under doc/api.\n  gem 'sdoc', require: false\nend\n\ngroup :producation do\n  gem 'rails_12factor'\nend\n\n# Use unicorn as the app server\n# gem 'unicorn'\n\n# Use Capistrano for deployment\n# gem 'capistrano', group: :development\n\n# Use debugger\n# gem 'debugger', group: [:development, :test]\n\n",
+			"file": "Gemfile",
+			"file_size": -1,
+			"file_write_time": -1,
+			"settings":
+			{
+				"buffer_size": 901,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "reviser\n",
+			"file": ".ruby-gemset",
+			"file_size": -1,
+			"file_write_time": -1,
+			"settings":
+			{
+				"buffer_size": 8,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "# A sample Guardfile\n# More info at https://github.com/guard/guard#readme\n\nguard :rspec, :all_on_start => true do\n  watch(%r{^spec/.+_spec\\.rb$})\n  watch(%r{^lib/(.+)\\.rb$})     { |m| \"spec/lib/#{m[1]}_spec.rb\" }\n  watch('spec/spec_helper.rb')  { \"spec\" }\n\n  # Rails example\n  watch(%r{^app/(.+)\\.rb$})                           { |m| \"spec/#{m[1]}_spec.rb\" }\n  watch(%r{^app/(.*)(\\.erb|\\.haml|\\.slim)$})          { |m| \"spec/#{m[1]}#{m[2]}_spec.rb\" }\n  watch(%r{^app/controllers/(.+)_(controller)\\.rb$})  { |m| [\"spec/routing/#{m[1]}_routing_spec.rb\", \"spec/#{m[2]}s/#{m[1]}_#{m[2]}_spec.rb\", \"spec/acceptance/#{m[1]}_spec.rb\"] }\n  watch(%r{^spec/support/(.+)\\.rb$})                  { \"spec\" }\n  watch('config/routes.rb')                           { \"spec/routing\" }\n  watch('app/controllers/application_controller.rb')  { \"spec/controllers\" }\n\n  # Capybara features specs\n  watch(%r{^app/views/(.+)/.*\\.(erb|haml|slim)$})     { |m| \"spec/features/#{m[1]}_spec.rb\" }\n\n  # Turnip features and steps\n  watch(%r{^spec/acceptance/(.+)\\.feature$})\n  watch(%r{^spec/acceptance/steps/(.+)_steps\\.rb$})   { |m| Dir[File.join(\"**/#{m[1]}.feature\")][0] || 'spec/acceptance' }\nend\n",
+			"file": "Guardfile",
+			"file_size": -1,
+			"file_write_time": -1,
+			"settings":
+			{
+				"buffer_size": 1172,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"ssr",
+				"Set Syntax: Ruby"
+			],
+			[
+				"ss",
+				"Set Syntax: RSpec"
+			],
+			[
+				"ssruby",
+				"Set Syntax: Ruby on Rails"
+			],
+			[
+				"ssrspec",
+				"Set Syntax: RSpec"
+			],
+			[
+				"pakcina",
+				"Package Control: Install Package"
+			],
+			[
+				"ssru",
+				"Set Syntax: Ruby"
+			],
+			[
+				"ssrub",
+				"Set Syntax: Ruby"
+			],
+			[
+				"p",
+				"Package Control: Install Package"
+			],
+			[
+				"pack",
+				"Package Control: Remove Package"
+			],
+			[
+				"packin",
+				"Package Control: Install Package"
+			],
+			[
+				"ssco",
+				"Set Syntax: CoffeeScript"
+			]
+		],
+		"width": 467.0
+	},
+	"console":
+	{
+		"height": 153.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/mfrank/workspace/reviser/Gemfile",
+		"/home/mfrank/workspace/reviser/config/environments/production.rb",
+		"/home/mfrank/workspace/reviser/app/models/proofreading_agency.rb",
+		"/home/mfrank/workspace/reviser/spec/models/order_spec.rb",
+		"/home/mfrank/workspace/reviser/config.ru",
+		"/home/mfrank/workspace/reviser/app/controllers/orders_controller.rb",
+		"/home/mfrank/workspace/reviser/Guardfile",
+		"/home/mfrank/workspace/reviser/spec/spec_helper.rb",
+		"/home/mfrank/workspace/reviser/app/views/proofreading_agency/show.html.erb",
+		"/home/mfrank/workspace/reviser/Rakefile",
+		"/home/mfrank/workspace/reviser/README.rdoc",
+		"/home/mfrank/workspace/reviser/app/models/order.rb",
+		"/home/mfrank/workspace/reviser/spec/models/proofreading_agency_spec.rb",
+		"/home/mfrank/workspace/reviser/app/views/orders/_form.html.erb",
+		"/home/mfrank/workspace/reviser/db/migrate/20140407190501_add_orders.rb",
+		"/home/mfrank/workspace/reviser/config/database.yml",
+		"/home/mfrank/workspace/reviser/db/migrate/20140407190501_create_order_table.rb",
+		"/home/mfrank/workspace/reviser/app/views/orders/create.html.erb",
+		"/home/mfrank/workspace/reviser/db/test.sqlite3",
+		"/home/mfrank/workspace/reviser/tmp/cache/assets/development/sprockets/cffd775d018f68ce5dba1ee0d951a994",
+		"/home/mfrank/workspace/reviser/app/controllers/application_controller.rb",
+		"/home/mfrank/workspace/reviser/lib/tasks/.keep",
+		"/home/mfrank/workspace/reviser/app/controllers/proofreading_agency_controller.rb",
+		"/home/mfrank/workspace/reviser/Gemfile.lock",
+		"/home/mfrank/workspace/reviser/spec/models/order_integration_spec.rb",
+		"/home/mfrank/.config/sublime-text-3/Packages/User/HTML (Rails).sublime-settings",
+		"/home/mfrank/.config/sublime-text-3/Packages/User/Ruby.sublime-settings",
+		"/home/mfrank/workspace/reviser/app/assets/javascripts/application.js",
+		"/home/mfrank/workspace/reviser/vendor/assets/javascripts/.keep",
+		"/home/mfrank/workspace/reviser/public/robots.txt",
+		"/home/mfrank/workspace/reviser/.gitignore",
+		"/home/mfrank/workspace/reviser/config/environments/development.rb",
+		"/home/mfrank/workspace/reviser/test/spec_helper.rb",
+		"/home/mfrank/workspace/reviser/test/models/proofreading_agency_test.rb",
+		"/home/mfrank/workspace/reviser/test/test_helper.rb",
+		"/home/mfrank/workspace/reviser/config/routes.rb",
+		"/home/mfrank/.config/sublime-text-3/Packages/User/RSpec.sublime-settings",
+		"/home/mfrank/workspace/reviser/config/initializers/mime_types.rb",
+		"/home/mfrank/workspace/reviser/app/models/agency.rb",
+		"/home/mfrank/workspace/reviser/app/controllers/agency_controller.rb",
+		"/home/mfrank/.config/sublime-text-3/Packages/Default/Preferences.sublime-settings",
+		"/home/mfrank/workspace/reviser/config/application.rb",
+		"/home/mfrank/workspace/reviser/app/views/agency/show.html.erb",
+		"/home/mfrank/workspace/reviser/db/seeds.rb",
+		"/home/mfrank/workspace/lectoria/app/views/page/_content_packages.html.erb",
+		"/home/mfrank/workspace/lectoria/README.md",
+		"/home/mfrank/workspace/lectoria/spec/models/correction_price_service_spec.rb",
+		"/home/mfrank/workspace/lectoria/spec/models/corrector_spec.rb",
+		"/home/mfrank/workspace/lectoria/app/models/correction_price_service.rb",
+		"/home/mfrank/workspace/lectoria/app/models/corrector.rb",
+		"/home/mfrank/workspace/lectoria/CORRECTION.md",
+		"/home/mfrank/workspace/lectoria/Capfile",
+		"/home/mfrank/workspace/lectoria/spec/models/order_spec.rb",
+		"/home/mfrank/workspace/lectoria/app/helpers/order_helper.rb",
+		"/home/mfrank/workspace/lectoria/app/models/order_processor.rb",
+		"/home/mfrank/workspace/lectoria/app/models/order.rb",
+		"/home/mfrank/workspace/lectoria/app/views/page/_content_main.html.erb",
+		"/home/mfrank/workspace/lectoria/app/views/page/_content_explanation.html.erb",
+		"/home/mfrank/workspace/lectoria/config/initializers/wrap_parameters.rb",
+		"/home/mfrank/workspace/lectoria/tmp/cache/assets/development/sass/97ea7544d7d161a337740750fccd1df5daf30d30/font-awesome.scssc",
+		"/home/mfrank/workspace/lectoria/app/mailers/order_mailer.rb",
+		"/home/mfrank/workspace/lectoria/app/views/page/_content_secret.html.erb",
+		"/home/mfrank/workspace/lectoria/app/views/page/_content_team.html.erb",
+		"/home/mfrank/workspace/lectoria/app/assets/stylesheets/pages/page.css.scss",
+		"/home/mfrank/workspace/lectoria/Gemfile",
+		"/home/mfrank/workspace/lectoria/config/environments/production.rb",
+		"/home/mfrank/workspace/lectoria/app/views/layouts/_pre_footer.html.erb",
+		"/home/mfrank/workspace/lectoria/app/views/order_mailer/order_complete.html.erb",
+		"/home/mfrank/workspace/lectoria/app/models/purchase.rb",
+		"/home/mfrank/workspace/lectoria/db/migrate/20140127102113_create_orders.rb",
+		"/home/mfrank/workspace/lectoria/config/deploy/production.rb",
+		"/home/mfrank/workspace/lectoria/app/views/purchases/index.html.erb",
+		"/home/mfrank/workspace/lectoria/spec/views/purchases/index.html.erb_spec.rb",
+		"/home/mfrank/workspace/lectoria/config/routes.rb",
+		"/home/mfrank/workspace/lectoria/db/production.sqlite3",
+		"/home/mfrank/workspace/lectoria/app/views/order_mailer/order_created.html.erb",
+		"/home/mfrank/workspace/lectoria/app/views/page/imprint.html.erb",
+		"/home/mfrank/Desktop/bookmarks_4_6_14.html",
+		"/home/mfrank/workspace/lectoria/db/schema.rb",
+		"/home/mfrank/workspace/lectoria/app/views/page/main.html.erb",
+		"/home/mfrank/workspace/lectoria/app/controllers/users_controller.rb",
+		"/home/mfrank/workspace/lectoria/app/views/users/show.html.erb",
+		"/home/mfrank/workspace/lectoria/app/controllers/page_controller.rb",
+		"/home/mfrank/workspace/lectoria/app/views/page/agbs.html.erb",
+		"/home/mfrank/workspace/lectoria/app/views/page/privacy.html.erb",
+		"/home/mfrank/workspace/lectoria/vendor/assets/javascripts/ice/src/icePluginManager.js",
+		"/home/mfrank/workspace/lectoria/config/initializers/omniauth.rb",
+		"/home/mfrank/workspace/lectoria/config/initializers/inflections.rb",
+		"/home/mfrank/workspace/lectoria/app/views/orders/index.html.erb",
+		"/home/mfrank/workspace/lectoria/lib/development_mail_interceptor.rb",
+		"/home/mfrank/workspace/lectoria/config/initializers/mime_types.rb",
+		"/home/mfrank/workspace/lectoria/app/views/orders/_status.html.erb",
+		"/home/mfrank/workspace/lectoria/spec/spec_helper.rb",
+		"/home/mfrank/workspace/lectoria/config/omniauth.yml",
+		"/home/mfrank/workspace/lectoria/app/controllers/orders_controller.rb",
+		"/home/mfrank/workspace/lectoria/app/assets/javascripts/orders.js",
+		"/home/mfrank/workspace/lectoria/app/assets/javascripts/page.js.coffee",
+		"/home/mfrank/workspace/lectoria/app/views/page/packages.html.erb",
+		"/home/mfrank/workspace/lectoria/app/assets/stylesheets/styles.css.scss",
+		"/home/mfrank/workspace/lectoria/app/assets/stylesheets/pages/packages.css.scss",
+		"/home/mfrank/workspace/lectoria/app/models/authentication.rb",
+		"/home/mfrank/workspace/lectoria/config/paypal.yml",
+		"/home/mfrank/workspace/lectoria/db/migrate/20140209204416_add_payment_id_too_order.rb",
+		"/home/mfrank/workspace/lectoria/app/views/layouts/application.html.erb",
+		"/home/mfrank/workspace/lectoria/app/views/layouts/application_open.erb",
+		"/home/mfrank/workspace/lectoria/app/views/layouts/corrector.html.erb",
+		"/home/mfrank/workspace/lectoria/app/views/authentications/_provider.html.erb",
+		"/home/mfrank/workspace/lectoria/tmp/cache/assets/development/sass/75d9d981e57b82e14ff0b9ade08f6cd90a339be8/_keystrokes.scssc",
+		"/home/mfrank/workspace/lectoria/db/migrate/20140325155439_add_token_to_order.rb",
+		"/home/mfrank/workspace/lectoria/config/application.rb",
+		"/home/mfrank/Dropbox/pr_projekte/reviser.de/ssl/resiver.de_decrypted_private.key",
+		"/home/mfrank/Dropbox/pr_projekte/reviser.de/ssl/resiver.de_private.key",
+		"/home/mfrank/Dropbox/pr_projekte/reviser.de/ssl/resiver.de_public.crt",
+		"/home/mfrank/workspace/lectoria/config/database.yml",
+		"/home/mfrank/workspace/lectoria/app/models/pay_pal_interface.rb",
+		"/home/mfrank/workspace/lectoria/config/deploy.rb",
+		"/home/mfrank/workspace/lectoria/bin/delayed_job",
+		"/home/mfrank/workspace/lectoria/db/migrate/20140224175422_change_column_payment_id_to_string_for_purchase.rb",
+		"/home/mfrank/workspace/lectoria/spec/feature/paypal_rest_sdk_spec.rb",
+		"/home/mfrank/workspace/lectoria/config/initializers/paypal.rb",
+		"/home/mfrank/workspace/lectoria/log/production.log",
+		"/home/mfrank/workspace/lectoria/lib/capistrano/tasks/delayed_job.cap",
+		"/home/mfrank/workspace/lectoria/db/migrate/20140204115712_create_authentications.rb",
+		"/home/mfrank/workspace/lectoria/tmp/cache/assets/development/sass/d5a088b7a1a2ee792bd62c6f56505b96c382432a/foundation_and_overrides.scssc",
+		"/home/mfrank/workspace/lectoria/db/migrate/20140128164722_add_email_to_order.rb",
+		"/home/mfrank/workspace/lectoria/Rakefile",
+		"/home/mfrank/workspace/lectoria/tmp/cache/assets/development/sass/f8ea644a9433c88bed5a17e371006f5db30c6c1f/packages.css.scssc",
+		"/home/mfrank/workspace/lectoria/app/controllers/application_controller.rb"
+	],
+	"find":
+	{
+		"height": 30.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"/home/mfrank/workspace/lectoria",
+			"/home/mfrank/workspace/lectoria/config",
+			"",
+			"/home/mfrank/workspace/lectoria"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"claim",
+			"proofreading_agency",
+			"	\n",
+			"indent",
+			"set_state_paid",
+			"iche",
+			"Korrekturen",
+			"onePageNav",
+			"full_host",
+			"localhost",
+			"api.sandbox.paypal.com",
+			"62.75.166.125",
+			"daemons",
+			"script/delayed_job",
+			"martin.frank.ts@gmail.com",
+			"martin.frank.ts@mail.com"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"Korrektur",
+			"bin/delayed_job",
+			"korrektur@reviser.de"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 3,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "spec/spec_helper.rb",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1927,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1922,
+								1922
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Ruby/Ruby.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 655.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "app/models/proofreading_agency.rb",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 395,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								111,
+								111
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Ruby/Ruby.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "Gemfile",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 901,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								901,
+								901
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Ruby/Ruby.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": -0.0,
+						"translation.y": 132.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": ".ruby-gemset",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8,
+								8
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "Guardfile",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1172,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1172,
+								1172
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 30.0
+	},
+	"input":
+	{
+		"height": 34.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 118.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"project": "reviser.sublime-project",
+	"replace":
+	{
+		"height": 56.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"guard",
+				"Guardfile"
+			],
+			[
+				"ge",
+				"Gemfile"
+			],
+			[
+				"pro",
+				"app/models/proofreading_agency.rb"
+			],
+			[
+				"order",
+				"spec/models/order_spec.rb"
+			],
+			[
+				"spec",
+				"spec/spec_helper.rb"
+			],
+			[
+				"gem",
+				"Gemfile"
+			],
+			[
+				"data",
+				"config/database.yml"
+			],
+			[
+				"creat",
+				"db/migrate/20140407190501_create_order_table.rb"
+			],
+			[
+				"createorder",
+				"db/migrate/20140407190501_create_order_table.rb"
+			],
+			[
+				"db/migrate/20140407190501_create_order_table.rb",
+				"db/migrate/20140407190501_create_order_table.rb"
+			],
+			[
+				"gemfile",
+				"Gemfile.lock"
+			],
+			[
+				"rake",
+				"Rakefile"
+			],
+			[
+				"gu",
+				"Guardfile"
+			],
+			[
+				"guar",
+				"Guardfile"
+			],
+			[
+				"proof",
+				"app/models/proofreading_agency.rb"
+			],
+			[
+				"pr",
+				"app/models/proofreading_agency.rb"
+			],
+			[
+				"root",
+				"public/robots.txt"
+			],
+			[
+				"agenc",
+				"app/controllers/agency_controller.rb"
+			],
+			[
+				"routes",
+				"config/routes.rb"
+			],
+			[
+				"sho",
+				"app/views/agency/show.html.erb"
+			],
+			[
+				"show",
+				"app/views/proofreading_agency/show.html.erb"
+			],
+			[
+				"app",
+				"config/application.rb"
+			],
+			[
+				"corresspec",
+				"spec/models/correction_price_service_spec.rb"
+			],
+			[
+				"order_spec",
+				"spec/models/order_spec.rb"
+			],
+			[
+				"conte",
+				"app/views/page/_content_packages.html.erb"
+			],
+			[
+				"read",
+				"README.md"
+			],
+			[
+				"content",
+				"app/views/page/_content_packages.html.erb"
+			],
+			[
+				"purch",
+				"app/models/purchase.rb"
+			],
+			[
+				"prod",
+				"config/environments/production.rb"
+			],
+			[
+				"rem",
+				"README.md"
+			],
+			[
+				"imprint",
+				"app/views/page/imprint.html.erb"
+			],
+			[
+				"agb",
+				"app/views/page/agbs.html.erb"
+			],
+			[
+				"main",
+				"app/views/page/main.html.erb"
+			],
+			[
+				"priv",
+				"app/views/page/privacy.html.erb"
+			],
+			[
+				"priva",
+				"app/views/page/privacy.html.erb"
+			],
+			[
+				"impr",
+				"app/views/page/imprint.html.erb"
+			],
+			[
+				"shema",
+				"db/schema.rb"
+			],
+			[
+				"order.rb",
+				"app/models/order.rb"
+			],
+			[
+				"orderstat",
+				"app/views/orders/_status.html.erb"
+			],
+			[
+				"page",
+				"app/controllers/page_controller.rb"
+			],
+			[
+				"ag",
+				"app/views/page/agbs.html.erb"
+			],
+			[
+				"ca",
+				"Capfile"
+			],
+			[
+				"de",
+				"config/deploy.rb"
+			],
+			[
+				"day",
+				"config/database.yml"
+			],
+			[
+				"payinf",
+				"app/models/pay_pal_interface.rb"
+			],
+			[
+				"readm",
+				"README.md"
+			],
+			[
+				"paypal",
+				"app/models/pay_pal_interface.rb"
+			],
+			[
+				"pay",
+				"config/paypal.yml"
+			],
+			[
+				"cap",
+				"Capfile"
+			],
+			[
+				"depl",
+				"config/deploy.rb"
+			],
+			[
+				"pack",
+				"app/views/page/_content_packages.html.erb"
+			],
+			[
+				"conten",
+				"app/views/page/_content_explanation.html.erb"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+		],
+		"width": 392.0
+	},
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 389.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

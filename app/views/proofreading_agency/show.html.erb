@@ -1,4 +1,4 @@
 <h1><%= @proofreading_agency.name %></h1>
 <p><%= @proofreading_agency.claim %></p>
-
-<% render partial: 'order/form' %>
+<p>Auftragschlange: <%= @proofreading_agency.orders_count %></p>
+<%= render partial: 'orders/form' %>

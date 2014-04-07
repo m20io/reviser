@@ -1,0 +1,1 @@
+THE_PROOFREADING_AGENCY = ProofreadingAgency.new

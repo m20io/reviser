@@ -1,9 +1,9 @@
 class ProofreadingAgency
-	attr_reader :orders
+	attr_reader :backlog
 	attr_writer :order_factory
 
 	def initialize
-		@orders = []
+		@backlog = []
 	end
 
 	def name
@@ -14,10 +14,14 @@ class ProofreadingAgency
 		"Lektorat für zeitnahe Korrektur kuzer Texte."
 	end
 
-	def new_order
-		order_factory.call.tap do |order|
+	def new_order(*args)
+		order_factory.call(*args).tap do |order|
 			order.proofreading_agency = self
 		end
+	end
+
+  def backlog_count
+		backlog.count
 	end
 
 	private

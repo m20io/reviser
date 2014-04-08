@@ -1,0 +1,8 @@
+test: &default
+
+  # Credentials for REST APIs
+  client_id: client_id
+  client_secret: client_secret
+
+  # Mode can be 'live' or 'sandbox'
+  mode: sandbox

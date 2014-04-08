@@ -25,6 +25,7 @@ group :test,:development  do
   gem 'guard-rspec'
   gem 'rspec-rails'
   gem 'simplecov', '~> 0.7.1'
+  gem "rb-readline", "~> 0.5.0"
 end
 
 group :doc do

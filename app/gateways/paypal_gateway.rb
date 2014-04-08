@@ -1,11 +1,16 @@
 class PaypalGateway
 
   attr_writer :payment_factory, :transaction_factory
-  attr_accessor :payment
+  attr_accessor :payment, :return_url, :cancel_url
+
+  class PaymentError < StandardError; end
 
   def prepare_payment(object)
     self.payment = build_payment_from_purchase(object) 
-    self.payment.create
+    unless self.payment.create
+      Rails.logger.error "Paypal payment creation failed. \n #{self.payment.error}"
+      raise PaymentError
+    end
   end
 
   def paypal_payment_id
@@ -29,6 +34,8 @@ class PaypalGateway
     payment = payment_factory.call
     payment.intent = "sale"
     payment.payer.payment_method = "paypal"
+    payment.redirect_urls.return_url = self.return_url
+    payment.redirect_urls.cancel_url = self.cancel_url
     transaction = transaction_factory.call
     transaction.amount.total = purchase.total_amount
     transaction.amount.currency = "EUR" 
@@ -37,9 +44,4 @@ class PaypalGateway
 
     payment
   end
-
-  def approval_link_selection(payment)
-    
-  end
-
 end

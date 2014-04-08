@@ -8,7 +8,7 @@ describe ProofreadingAgency do
     subject.claim.should be_present
   end
 
-  it "has no backlog" do
+  it "has an empty backlog" do
     subject.backlog.should be_empty
   end
 
@@ -35,16 +35,16 @@ describe ProofreadingAgency do
       subject.new_order.should equal local_order
     end
 
-    it "set the agency refernce of the order to it self" do
-      subject.new_order.proofreading_agency.should equal subject
-    end
-
     it "gives the parameter to the factory method" do
       subject.order_factory = ->(hash){ OpenStruct.new(hash) }
       
       order = subject.new_order(order_params) 
       order.raw_text.should eql order_params[:raw_text]
       order.email.should eql order_params[:email]
+    end
+
+    it "set the agency refernce of the order to it self" do
+      subject.new_order.proofreading_agency.should equal subject
     end
 
     it "stores a reference to the order" do
@@ -67,6 +67,13 @@ describe ProofreadingAgency do
       subject.process_order(local_order).order.should eql local_order
     end
 
+    it "sets a paypal gateway to the processor" do
+      local_order_order_processor.stub(:paypal_gateway=)
+      expect(local_order_order_processor).to receive(:paypal_gateway=).once
+      subject.order_processor_factory = ->(args){ local_order_order_processor }
+      
+      subject.process_order(local_order)
+    end
   end
 
 end

@@ -30,7 +30,10 @@ class ProofreadingAgency
   end
 
   def process_order(*args)
-    order_processor_factory.call(*args)
+    order_processor = order_processor_factory.call(*args)
+    order_processor.paypal_gateway = PaypalGateway.new
+
+    order_processor
   end
 
 

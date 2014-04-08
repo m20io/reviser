@@ -14,7 +14,7 @@ describe OrderProcessor do
     subject.purchase.should equal object
   end
 
-  it "accecpts a paypal gateway" do
+  it "accepts a paypal gateway" do
     some_gateway = double
     subject.paypal_gateway = some_gateway
     subject.paypal_gateway.should equal some_gateway

@@ -3,8 +3,19 @@ require 'spec_helper'
 describe ProofreadingAgency do 
   subject { ProofreadingAgency.new }
 
+  it "has a name and a claim" do
+    subject.name.should be_present
+    subject.claim.should be_present
+  end
+
   it "has no backlog" do
     subject.backlog.should be_empty
+  end
+
+  it "can store orders" do
+    local_order = OpenStruct.new
+    subject.add_to_backlog local_order
+    subject.backlog.should include local_order
   end
 
   it "knows the number of orders" do
@@ -35,5 +46,27 @@ describe ProofreadingAgency do
       order.raw_text.should eql order_params[:raw_text]
       order.email.should eql order_params[:email]
     end
+
+    it "stores a reference to the order" do
+      subject.new_order
+      subject.backlog.should include local_order
+    end
   end
+
+  describe "#process_order" do
+    let(:local_order) { OpenStruct.new }
+    let(:local_order_order_processor) { OpenStruct.new }
+
+    it "return a new order processor" do
+      subject.order_processor_factory = ->(args){ local_order_order_processor }
+      subject.process_order(nil).should eql local_order_order_processor
+    end
+
+    it "takes an order and hands it two the order processor factory" do
+      subject.order_processor_factory = ->(args){ OpenStruct.new(order: args) }
+      subject.process_order(local_order).order.should eql local_order
+    end
+
+  end
+
 end

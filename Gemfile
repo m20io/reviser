@@ -24,6 +24,7 @@ group :test,:development  do
   gem 'sqlite3'
   gem 'guard-rspec'
   gem 'rspec-rails'
+  gem 'simplecov', '~> 0.7.1'
 end
 
 group :doc do

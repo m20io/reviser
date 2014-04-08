@@ -17,3 +17,10 @@
 
 # Ignore all coverage reports
 /coverage/*
+
+# Ignore paypal api keys
+/config/paypal.yml
+
+# Ignore sublime-projects and workspaces
+*.sublime-project
+*.sublime-workspace

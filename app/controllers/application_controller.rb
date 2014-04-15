@@ -5,6 +5,6 @@ class ApplicationController < ActionController::Base
   before_action :init_proofreading_agency
 
   def init_proofreading_agency
-    @proofreading_agency = THE_PROOFREADING_AGENCY
+    @proofreading_agency = ProofreadingAgency.instance
   end
 end

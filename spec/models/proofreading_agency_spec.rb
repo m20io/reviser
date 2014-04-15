@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe ProofreadingAgency do 
-  subject { ProofreadingAgency.new }
+  subject { ProofreadingAgency.send(:new) }
 
   it "has a name and a claim" do
     subject.name.should be_present
@@ -21,6 +21,16 @@ describe ProofreadingAgency do
   it "knows the number of orders" do
     subject.stub(:backlog).and_return 5.times.map { |dev_null| OpenStruct.new }
     subject.backlog_count.should eql 5
+  end
+
+  it "finds all orders for index" do
+    subject.find_orders_for_index.should eql Order.all.to_a
+  end
+
+  it "find an order by id" do
+    order = Order.new
+    order.save
+    subject.find_order(order.id).should eql order
   end
 
   describe "#new_order" do

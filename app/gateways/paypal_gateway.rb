@@ -1,5 +1,7 @@
-class PaypalGateway
+require 'paypal-sdk-rest'
 
+class PaypalGateway
+  include PayPal::SDK::REST
   attr_writer :payment_factory, :transaction_factory
   attr_accessor :payment, :return_url, :cancel_url
 

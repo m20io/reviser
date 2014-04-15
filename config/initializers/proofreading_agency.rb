@@ -1,1 +1,1 @@
-THE_PROOFREADING_AGENCY = ProofreadingAgency.new
+THE_PROOFREADING_AGENCY = ProofreadingAgency.instance

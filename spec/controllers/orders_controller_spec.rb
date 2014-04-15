@@ -11,7 +11,7 @@ describe OrdersController do
       agency_mock.stub(:process_order).and_return(local_order_processor)
       agency_mock.stub(:payment_redirect_url)
       # singleton root object
-      stub_const("THE_PROOFREADING_AGENCY", agency_mock)
+      ProofreadingAgency.stub(:instance).and_return agency_mock
     end
 
     it "calls new order with params" do

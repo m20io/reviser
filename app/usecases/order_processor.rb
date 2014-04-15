@@ -23,7 +23,7 @@ class OrderProcessor
   end
 
   def purchase_factory
-    @purchase_factory ||= Purchase.public_methods(:new)
+    @purchase_factory ||= Purchase.public_method(:new)
   end
 
 end

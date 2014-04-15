@@ -4,9 +4,13 @@ describe Order do
   subject { Order.new }
   
   it "support reading and writing the agency reference" do
-    proofreading_agency = ProofreadingAgency.new
+    proofreading_agency = ProofreadingAgency.instance
     subject.proofreading_agency = proofreading_agency
     subject.proofreading_agency.should equal proofreading_agency
+  end
+
+  it "is unpaid in the beginning" do
+    subject.is_paid?.should be_false
   end
 
 end

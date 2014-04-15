@@ -1,4 +1,6 @@
 class ProofreadingAgency
+  include Singleton
+
   attr_reader :backlog
   attr_writer :order_factory, :order_processor_factory
 
@@ -13,13 +15,21 @@ class ProofreadingAgency
   def claim
     "Lektorat für zeitnahe Korrektur kuzer Texte."
   end
-
+  #TODO merge backlog and find
   def add_to_backlog(object)
     @backlog << object
   end 
     
   def backlog_count
     backlog.count
+  end
+
+  def find_orders_for_index
+    Order.all.to_a
+  end
+
+  def find_order(id)
+    Order.find(id)
   end
 
   def new_order(*args)

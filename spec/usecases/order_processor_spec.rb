@@ -20,6 +20,10 @@ describe OrderProcessor do
     subject.paypal_gateway.should equal some_gateway
   end
 
+  it "create a Purchase" do
+    subject.send(:purchase_factory).call.should be_a Purchase
+  end
+
   describe "#run" do
     let(:local_order) { OpenStruct.new }
     let(:local_purchase) { OpenStruct.new }

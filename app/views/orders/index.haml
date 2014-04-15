@@ -1,0 +1,12 @@
+%table
+  %thead
+    %tr
+      %th E-Mail
+      %th Text
+      %th 
+  %tbody
+    - @orders.each do |order|
+      %tr
+        %td=order.email
+        %td=order.raw_text
+        %td= link_to "anzeigen", order_path(order)

@@ -18,6 +18,7 @@ gem "omniauth-google-oauth2"
 gem "authbuttons-rails"
 gem 'omniauth-linkedin'
 gem 'paypal-sdk-rest'
+gem 'haml-rails'
 
 group :test,:development  do
   gem 'pry'

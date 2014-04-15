@@ -1,0 +1,4 @@
+%h1= @proofreading_agency.name
+%p= @proofreading_agency.claim 
+%p Auftragschlange: #{@proofreading_agency.backlog_count}
+= render partial: 'orders/form'

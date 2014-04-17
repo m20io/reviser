@@ -9,8 +9,8 @@ describe Order do
     subject.proofreading_agency.should equal proofreading_agency
   end
 
-  it "is unpaid in the beginning" do
-    subject.is_paid?.should be_false
+  it "is incomplete in the beginning" do
+    subject.is_incomplete?.should be_false
   end
 
 end

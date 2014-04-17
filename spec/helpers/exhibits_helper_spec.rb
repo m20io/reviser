@@ -6,7 +6,7 @@ describe ExhibitsHelper do
 
   it "decorates unpaid orders with an UnpaidOrderExhibit" do
     order = Order.new
-    order.stub(:is_paid?) { false }
+    order.stub(:is_incomplete?) { false }
     subject.exhibit(order,context).should be_kind_of UnpaidOrderExhibit
   end
 

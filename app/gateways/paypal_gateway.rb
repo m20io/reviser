@@ -15,7 +15,12 @@ class PaypalGateway
     end
   end
 
-  def paypal_payment_id
+  def execute_payment(purchase)
+    payment = find_payment(purchase.payment_id)
+    payment.execute(purchase.payer_id)
+  end
+
+  def payment_id
     self.payment.id
   end
 
@@ -24,6 +29,10 @@ class PaypalGateway
   end
 
   private
+  def find_payment(payment_id)
+    Payment.find(payment_id)
+  end
+
   def payment_factory
     @payment_factory ||= Payment.public_method(:new)
   end

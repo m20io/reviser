@@ -55,9 +55,10 @@ describe PaypalGateway do
         subject.stub(:build_payment_from_purchase).and_return(local_mock_payment)
 
       end
+
       it "stores the payment id" do 
         subject.prepare_payment(purchase)
-        subject.paypal_payment_id.should eql "PAY-123456789"
+        subject.payment_id.should eql "PAY-123456789"
       end
 
       it "stores the approval url" do
@@ -72,6 +73,7 @@ describe PaypalGateway do
         local_mock_payment.stub(:error).and_return({ error: "error!" })
         subject.stub(:build_payment_from_purchase).and_return(local_mock_payment)
       end
+
       it "raises an PaymentError" do
         expect{ subject.prepare_payment(purchase) }.to raise_error PaypalGateway::PaymentError
       end
@@ -80,6 +82,21 @@ describe PaypalGateway do
         Rails.logger.should_receive(:error) 
         subject.prepare_payment(purchase) rescue PaypalGateway::PaymentError
       end
+    end
+  end
+
+  describe '#execute_payment' do
+    it 'executes the payment with the payerId' do
+      @it = PaypalGateway.new
+      payment = double(PaypalGateway::Payment)
+      payment.stub(:execute)
+      PaypalGateway::Payment.stub(:find).and_return payment
+      purchase = double(Purchase)
+      purchase.stub(:payment_id).and_return 'a_payment_id'
+      purchase.stub(:payer_id).and_return 'a_payer_id'
+
+      expect(payment).to receive(:execute).with('a_payer_id').once
+      @it.execute_payment(purchase)
     end
   end
 

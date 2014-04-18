@@ -1,7 +1,5 @@
 class Order < ActiveRecord::Base
-  attr_accessor :proofreading_agency,:purchase
+  attr_accessor :proofreading_agency
 
-  def is_incomplete?
-    false
-  end
+  has_one :purchase
 end 

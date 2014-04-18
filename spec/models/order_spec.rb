@@ -8,9 +8,12 @@ describe Order do
     subject.proofreading_agency = proofreading_agency
     subject.proofreading_agency.should equal proofreading_agency
   end
-
-  it "is incomplete in the beginning" do
-    subject.is_incomplete?.should be_false
+  
+  it "has a presistent purchase associated" do
+    purchase = Purchase.create
+    subject.purchase = purchase
+    subject.save
+    Order.find(subject.id).purchase.should eql purchase    
   end
 
 end

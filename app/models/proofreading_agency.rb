@@ -1,12 +1,7 @@
 class ProofreadingAgency
   include Singleton
 
-  attr_reader :backlog
-  attr_writer :order_factory, :order_processor_factory
-
-  def initialize
-    @backlog = []
-  end
+  attr_writer :order_factory, :purchase_processor_factory
 
   def name
     "Reviser Online"
@@ -15,35 +10,34 @@ class ProofreadingAgency
   def claim
     "Lektorat für zeitnahe Korrektur kuzer Texte."
   end
-  #TODO merge backlog and find
+
   def add_to_backlog(object)
-    @backlog << object
+     object.save
   end 
     
   def backlog_count
     backlog.count
   end
 
-  def find_orders_for_index
+  def backlog
     Order.all.to_a
   end
 
-  def find_order(id)
+  def find_in_backlog(id)
     Order.find(id)
   end
 
   def new_order(*args)
     order_factory.call(*args).tap do |order|
-      order.proofreading_agency = self
       add_to_backlog order
     end
   end
 
   def process_order(*args)
-    order_processor = order_processor_factory.call(*args)
-    order_processor.paypal_gateway = PaypalGateway.new
+    purchase_processor = purchase_processor_factory.call(*args)
+    purchase_processor.paypal_gateway = PaypalGateway.new
 
-    order_processor
+    purchase_processor
   end
 
 
@@ -52,7 +46,7 @@ class ProofreadingAgency
     @order_factory ||= Order.public_method(:new)
   end
 
-  def order_processor_factory
-    @order_processor_factory ||= OrderProcessor.public_method(:new)
+  def purchase_processor_factory
+    @purchase_processor_factory ||= PurchaseProcessor.public_method(:new)
   end
 end

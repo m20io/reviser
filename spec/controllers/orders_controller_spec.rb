@@ -4,11 +4,11 @@ describe OrdersController do
   describe '#create' do
     let(:agency_mock) { double("agency_mock") }
     let(:order_parmas) { {order: { "raw_text" => "some long text", "email" => "mail2@example.de" }} }
-    let(:local_order_processor) { OpenStruct.new({ payment_redirect_url: "https://www.payment.com" } )}
+    let(:local_purchase_processor) { OpenStruct.new({ payment_redirect_url: "https://www.payment.com" } )}
     
     before(:each) do
       agency_mock.stub(:new_order)
-      agency_mock.stub(:process_order).and_return(local_order_processor)
+      agency_mock.stub(:process_order).and_return(local_purchase_processor)
       agency_mock.stub(:payment_redirect_url)
       # singleton root object
       ProofreadingAgency.stub(:instance).and_return agency_mock

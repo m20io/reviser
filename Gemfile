@@ -21,6 +21,7 @@ gem 'paypal-sdk-rest'
 gem 'haml-rails'
 
 group :test,:development  do
+  gem 'dotenv-rails'
   gem 'pry'
   gem 'sqlite3'
   gem 'guard-rspec'

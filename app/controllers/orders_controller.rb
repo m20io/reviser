@@ -10,11 +10,11 @@ class OrdersController < ApplicationController
   end
 
   def index 
-    @orders = @proofreading_agency.find_orders_for_index
+    @orders = @proofreading_agency.backlog
   end
 
   def show
-    @order = @proofreading_agency.find_order(params[:id])
+    @order = @proofreading_agency.find_in_backlog(params[:id])
   end
 
   private

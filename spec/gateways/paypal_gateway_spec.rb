@@ -53,7 +53,6 @@ describe PaypalGateway do
         local_mock_payment.stub(:id).and_return "PAY-123456789"
         local_mock_payment.stub(:links).and_return mock_links()
         subject.stub(:build_payment_from_purchase).and_return(local_mock_payment)
-
       end
 
       it "stores the payment id" do 
@@ -86,17 +85,26 @@ describe PaypalGateway do
   end
 
   describe '#execute_payment' do
-    it 'executes the payment with the payerId' do
-      @it = PaypalGateway.new
-      payment = double(PaypalGateway::Payment)
-      payment.stub(:execute)
+    subject { PaypalGateway.new }
+    let(:payment) { double(PaypalGateway::Payment) }
+    let(:purchase) { double(Purchase) }
+    
+    before(:each) do
+      payment.stub(:execute).and_return true
+      payment.stub(:error).and_return OpenStruct.new
       PaypalGateway::Payment.stub(:find).and_return payment
-      purchase = double(Purchase)
       purchase.stub(:payment_id).and_return 'a_payment_id'
       purchase.stub(:payer_id).and_return 'a_payer_id'
+    end
 
+    it 'executes the payment with the payer_id' do
       expect(payment).to receive(:execute).with('a_payer_id').once
-      @it.execute_payment(purchase)
+      subject.execute_payment(purchase)
+    end
+
+    it 'raises an PaymentError if the execution fails' do
+      payment.stub(:execute).and_return false
+      expect{subject.execute_payment(purchase)}.to raise_error(PaypalGateway::PaymentError)
     end
   end
 

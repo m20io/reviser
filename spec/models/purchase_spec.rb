@@ -37,11 +37,20 @@ describe Purchase  do
         subject.state.should eql :waiting_for_approval
       end
 
-      it 'raises an illegal transition expection if state not incomplete' do
+      it 'raises an illegal transition expection if state is not incomplete' do
         subject.state = :crazy_state
         expect{ subject.transition_to_waiting_for_approval! }.to raise_error(Purchase::IllegalTransition)
       end
-
-
+    end
+    context 'with transit to done' do
+      it 'comes from waiting_for_approval' do
+        subject.state = :waiting_for_approval
+        subject.transition_to_done!
+        subject.state.should eql :done
+      end
+      it 'raises an illegal transition expection if state is not waiting_for_approval' do
+        subject.state = :crazy_state
+        expect{subject.transition_to_done!}.to raise_error(Purchase::IllegalTransition)
+      end
     end
 end

@@ -11,13 +11,16 @@ class PaypalGateway
     self.payment = build_payment_from_purchase(object) 
     unless self.payment.create
       Rails.logger.error "Paypal payment creation failed. \n #{self.payment.error}"
-      raise PaymentError
+      raise PaymentError, self.payment.error['message'], caller
     end
   end
 
   def execute_payment(purchase)
-    payment = find_payment(purchase.payment_id)
-    payment.execute(purchase.payer_id)
+    self.payment = find_payment(purchase.payment_id)
+    unless self.payment.execute(purchase.payer_id)
+      Rails.logger.error "Paypal payment creation failed. \n #{self.payment.error}"
+      raise PaymentError, self.payment.error['message'], caller
+    end
   end
 
   def payment_id

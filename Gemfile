@@ -27,6 +27,7 @@ group :test,:development  do
   gem 'rspec-rails'
   gem 'simplecov', '~> 0.7.1'
   gem "rb-readline", "~> 0.5.0"
+  gem "codeclimate-test-reporter", require: nil
 end
 
 group :doc do

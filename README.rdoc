@@ -1,7 +1,6 @@
 == README
 
-[![Code Climate](https://codeclimate.com/github/martin2punkt0/reviser.png)](https://codeclimate.com/github/martin2punkt0/reviser)
-
+{<img src="https://codeclimate.com/github/martin2punkt0/reviser.png" />}[https://codeclimate.com/github/martin2punkt0/reviser]
 
 This README would normally document whatever steps are necessary to get the
 application up and running.

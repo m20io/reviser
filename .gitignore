@@ -19,8 +19,8 @@
 /coverage/*
 
 # Ignore paypal api keys, database, etc
-/config/paypal.yml
-/config/database.yml
+#/config/paypal.yml
+#/config/database.yml
 .env
 
 # Ignore sublime-projects and workspaces

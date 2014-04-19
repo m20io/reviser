@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe OrdersController do
-  let(:orders) { [double,double] }
+  let(:orders) { [double({id:3}),double] }
   let(:agency_mock) { double(ProofreadingAgency) }
 
   before(:each) do
@@ -12,10 +12,10 @@ describe OrdersController do
 
   describe '#create' do
     let(:order_parmas) { {order: { "raw_text" => "some long text", "email" => "mail2@example.de" }} }
-    let(:local_purchase_processor) { OpenStruct.new({ payment_redirect_url: "https://www.payment.com" } )}
+    let(:local_purchase_processor) { double( { payment_redirect_url: "https://www.payment.com", run_prepare: nil } )}
     
     before(:each) do
-      agency_mock.stub(:new_order)
+      agency_mock.stub(:new_order).and_return(orders.first)
       agency_mock.stub(:process_order).and_return(local_purchase_processor)
       agency_mock.stub(:payment_redirect_url)
       # singleton root object
@@ -29,17 +29,27 @@ describe OrdersController do
     end
 
     it "process the order" do
-      local_order = OpenStruct.new
-      agency_mock.stub(:new_order).and_return(local_order)
-      expect(agency_mock).to receive(:process_order).with(local_order).once
+      expect(agency_mock).to receive(:process_order).with(orders.first).once
       
       post :create, order_parmas
     end
-
     it "redirects to the payment url" do
       post :create, order_parmas
-
       response.should redirect_to "https://www.payment.com"
+    end
+    context 'when there is a paypal payment error' do
+      before(:each) do
+        local_purchase_processor.stub(:run_prepare).and_raise PaypalGateway::PaymentError
+      end
+      it 'redirects to order show' do
+        post :create, order_parmas
+        response.should redirect_to order_path(orders.first)
+      end
+
+      it 'display an errors message' do
+        post :create, order_parmas
+        flash[:error].should be_present
+      end
     end
   end
   describe '#index' do

@@ -4,6 +4,6 @@ class Order < ActiveRecord::Base
   has_one :purchase
 
   def is_paid?
-    purchase.is_done?
+    purchase && purchase.is_done?
   end
 end 

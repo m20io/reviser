@@ -2,8 +2,8 @@ require 'paypal-sdk-rest'
 
 class PaypalGateway
   include PayPal::SDK::REST
-  attr_writer :payment_factory, :transaction_factory
-  attr_accessor :payment, :return_url, :cancel_url
+  attr_writer :payment_factory, :transaction_factory, :return_url, :cancel_url
+  attr_accessor :payment
 
   class PaymentError < StandardError; end
 
@@ -29,6 +29,14 @@ class PaypalGateway
 
   def approval_url
     self.payment.links.select{|link| link["rel"] == "approval_url"}.first["href"]
+  end
+
+  def return_url
+    @return_url ||  Rails.application.routes.url_helpers.purchase_processor_execute_url(host: '127.0.0.1:3000')
+  end
+
+  def cancel_url
+    @cancel_url || Rails.application.routes.url_helpers.purchase_processor_destory_url(host: '127.0.0.1:3000')
   end
 
   private

@@ -38,6 +38,15 @@ describe PaypalGateway do
         @it.redirect_urls.return_url.should eql "http://return/"
         @it.redirect_urls.cancel_url.should eql "http://cancel/"
       end
+
+      it 'has default return and cancel url' do
+        subject.return_url = nil
+        subject.cancel_url = nil
+        subject.prepare_payment(purchase)
+        @it = subject.payment
+        @it.redirect_urls.return_url.should eql "http://127.0.0.1:3000/purchase_processor/execute"
+        @it.redirect_urls.cancel_url.should eql "http://127.0.0.1:3000/purchase_processor/destory"
+      end
     end
 
     it "calls create for the payment" do

@@ -14,7 +14,12 @@ class PurchaseProcessor
   def run_prepare
     self.purchase = purchase_factory.call
     self.subject.purchase = self.purchase
-    self.paypal_gateway.prepare_payment(self.purchase)
+    begin
+      self.paypal_gateway.prepare_payment(self.purchase)
+    rescue
+      self.purchase.destroy
+      raise
+    end
     self.purchase.payment_id = paypal_gateway.payment_id
     self.purchase.transition_to_waiting_for_approval!
     self.payment_redirect_url = self.paypal_gateway.approval_url

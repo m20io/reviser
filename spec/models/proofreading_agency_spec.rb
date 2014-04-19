@@ -52,11 +52,6 @@ describe ProofreadingAgency do
       order.raw_text.should eql order_params[:raw_text]
       order.email.should eql order_params[:email]
     end
-
-    it "adds the order to the backlog" do
-      expect(subject).to receive(:add_to_backlog).with(local_order).once
-      subject.new_order
-    end
   end
 
   describe "#process_order" do
@@ -65,7 +60,7 @@ describe ProofreadingAgency do
 
     it "return a new order processor" do
       subject.purchase_processor_factory = ->(args){ local_purchase_processor }
-      subject.process_order(nil).should eql local_purchase_processor
+      subject.process_order(local_order).should eql local_purchase_processor
     end
 
     it "takes an order and hands it two the order processor factory" do
@@ -80,6 +75,10 @@ describe ProofreadingAgency do
       
       subject.process_order(local_order)
     end
-  end
 
+    it "adds the order to the backlog" do
+      expect(subject).to receive(:add_to_backlog).with(local_order).once
+      subject.process_order(local_order)
+    end
+  end
 end

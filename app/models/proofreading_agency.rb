@@ -28,13 +28,12 @@ class ProofreadingAgency
   end
 
   def new_order(*args)
-    order_factory.call(*args).tap do |order|
-      add_to_backlog order
-    end
+    order_factory.call(*args)
   end
 
-  def process_order(*args)
-    purchase_processor = purchase_processor_factory.call(*args)
+  def process_order(order)
+    add_to_backlog order
+    purchase_processor = purchase_processor_factory.call(order)
     purchase_processor.paypal_gateway = PaypalGateway.new
 
     purchase_processor

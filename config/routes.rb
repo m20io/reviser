@@ -3,4 +3,5 @@ Reviser::Application.routes.draw do
 
   resources :orders
   get 'purchase_processor/execute', to: 'purchase_processor#execute'
+  get 'purchase_processor/destory', to: 'purchase_processor#destory'
 end

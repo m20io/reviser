@@ -4,9 +4,14 @@ class OrdersController < ApplicationController
     current_order = @proofreading_agency.new_order(order_params)
     
     purchase_processor = @proofreading_agency.process_order(current_order)
-    purchase_processor.run
-    
-    redirect_to purchase_processor.payment_redirect_url
+    begin
+      purchase_processor.run_prepare
+    rescue PaypalGateway::PaymentError
+      flash[:error] = "Ihr Auftrag konnte nicht durchgeführt werden, da zurzeit keine Zahlung über PayPal möglich ist."
+      redirect_to order_path(current_order)
+    else
+      redirect_to purchase_processor.payment_redirect_url  
+    end
   end
 
   def index 

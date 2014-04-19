@@ -72,6 +72,20 @@ describe PurchaseProcessor do
       subject.purchase = OpenStruct.new(is_waiting_for_approval?: true)
       subject.prepared_successful?.should be_true
     end
+    
+    context 'when the paypal gateway fails' do
+      before(:each) do
+        mock_gateway.stub(:prepare_payment).and_raise(PaypalGateway::PaymentError)
+      end
+      it 'propergates the exception' do
+        expect{subject.run_prepare}.to raise_error(StandardError)
+      end
+
+      it 'it deletes the purchase' do
+        subject.run_prepare rescue
+        local_purchase.should be_destroyed
+      end
+    end
   end
 
   describe '#run_execute' do

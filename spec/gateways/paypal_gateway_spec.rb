@@ -8,7 +8,7 @@ describe PaypalGateway do
 
   describe '#prepare_payment' do
     subject { PaypalGateway.new }
-    let(:purchase) { OpenStruct.new({total_amount: "42.24", description: "text"}) }
+    let(:purchase) { OpenStruct.new({total_amount: 42.20, description: "text"}) }
     let(:local_mock_payment) { double("payment") }
     
     context "when setting payment values" do
@@ -29,11 +29,11 @@ describe PaypalGateway do
       end
 
       it "sets the transactions according to the purchase" do
-        @it.transactions.first.amount.total.should eql purchase.total_amount.to_s
-        @it.transactions.first.amount.currency.should eql "EUR"
-        @it.transactions.first.description.should eql purchase.description
+        @it.transactions[:amount][:total].should eql ("%.2f" % purchase.total_amount)
+        @it.transactions[:amount][:currency].should eql "EUR"
+        @it.transactions[:description].should eql purchase.description
       end
-
+      
       it "sets the return and cancel url" do
         @it.redirect_urls.return_url.should eql "http://return/"
         @it.redirect_urls.cancel_url.should eql "http://cancel/"
@@ -117,13 +117,20 @@ describe PaypalGateway do
     end
   end
 
+  describe '#format_amount' do
+    subject { PaypalGateway.new }
+    it 'has exactly two digits after a decimal point' do
+      subject.format_amount(1).should eql '1.00'
+    end
+  end
+
   def mock_payment
-    OpenStruct.new( { payer: OpenStruct.new, transactions: [], redirect_urls: OpenStruct.new, create: true })
+    OpenStruct.new( { payer: OpenStruct.new, transactions: OpenStruct.new, redirect_urls: OpenStruct.new, create: true })
   end
 
   def mock_links
-    [{ "href"=> "http://test1", "rel"=> "self","method"=> "GET" },
-     { "href"=> "http://test2", "rel"=> "approval_url", "method"=> "REDIRECT" },
-     { "href"=> "http://test3", "rel"=> "execute", "method"=> "POST" }]
+    [OpenStruct.new({ "href"=> "http://test1", "rel"=> "self","method"=> "GET" }),
+     OpenStruct.new({ "href"=> "http://test2", "rel"=> "approval_url", "method"=> "REDIRECT" }),
+     OpenStruct.new({ "href"=> "http://test3", "rel"=> "execute", "method"=> "POST" })]
   end
 end

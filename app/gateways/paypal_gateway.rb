@@ -28,7 +28,7 @@ class PaypalGateway
   end
 
   def approval_url
-    self.payment.links.select{|link| link["rel"] == "approval_url"}.first["href"]
+    self.payment.links.find{|link| link.rel == 'approval_url'}.try(:href)
   end
 
   def return_url
@@ -37,6 +37,10 @@ class PaypalGateway
 
   def cancel_url
     @cancel_url || Rails.application.routes.url_helpers.purchase_processor_destory_url(host: '127.0.0.1:3000')
+  end
+
+  def format_amount(value)
+    "%.2f" % value
   end
 
   private
@@ -58,11 +62,19 @@ class PaypalGateway
     payment.payer.payment_method = "paypal"
     payment.redirect_urls.return_url = self.return_url
     payment.redirect_urls.cancel_url = self.cancel_url
-    transaction = transaction_factory.call
-    transaction.amount.total = purchase.total_amount
-    transaction.amount.currency = "EUR" 
-    transaction.description = purchase.description
-    payment.transactions << transaction
+    payment.transactions = {
+      :amount => {
+        :total => format_amount(purchase.total_amount),
+        :currency => "EUR" 
+      },
+      :item_list => {
+        :items => { 
+          :name => purchase.description, :sku => "Korrektur", 
+          :price => format_amount(purchase.total_amount), :currency => "EUR", :quantity => 1 
+        }
+      },
+      :description => purchase.description
+    }
 
     payment
   end

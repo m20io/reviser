@@ -14,6 +14,8 @@ class PurchaseProcessor
   def run_prepare
     self.purchase = purchase_factory.call
     self.subject.purchase = self.purchase
+    self.purchase.total_amount = order_prize
+    self.purchase.description = order_description
     begin
       self.paypal_gateway.prepare_payment(self.purchase)
     rescue
@@ -41,6 +43,14 @@ class PurchaseProcessor
 
   def executed_successful?  
     self.purchase.present? && self.purchase.is_done?
+  end
+
+  def order_prize
+    20.20
+  end
+
+  def order_description
+    "200 Wörter"
   end
 
   private 

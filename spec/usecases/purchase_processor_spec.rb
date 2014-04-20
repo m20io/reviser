@@ -72,6 +72,16 @@ describe PurchaseProcessor do
       subject.purchase = OpenStruct.new(is_waiting_for_approval?: true)
       subject.prepared_successful?.should be_true
     end
+
+    it 'sets the total amount of the order to the purchase' do
+      subject.run_prepare
+      subject.purchase.total_amount.should eql subject.order_prize
+    end
+
+    it 'sets the order description to the purchase' do
+      subject.run_prepare
+      subject.purchase.description.should eql subject.order_description
+    end
     
     context 'when the paypal gateway fails' do
       before(:each) do
